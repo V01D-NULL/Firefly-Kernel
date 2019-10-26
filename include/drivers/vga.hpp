@@ -43,7 +43,7 @@ struct __attribute__((packed)) vga_char {
     color bg : 4;
 };
 
-static_assert(2 == sizeof(vga_char), "vga_char size incorrect");
+static_assert(2 == sizeof(vga_char), "vga_char size is incorrect");
 
 /**
  *                          A cursor for printing to the screen
@@ -75,34 +75,34 @@ struct cursor {
 
     /**
      *                      Creates a VGA character for printing
-     * @param c             The ASCII character to print
+     * @param  c            The ASCII character to print
      * @return              a VGA character to print
      */
     vga_char character(char c);
 
     /**
      *                      Prints an ASCII string
-     * @param arr           The null-terminated string to print
+     * @param  arr          The null-terminated string to print
      * @return              This cursor
      */
     cursor& operator<<(const char* arr);
 
     /**
      *                      Prints an ASCII character
-     * @param c             The character to print
+     * @param  c            The character to print
      * @return              This cursor
      */
     cursor& operator<<(char c);
 
     /**
      *                      Sets the default foreground color
-     * @param c             The color to set
+     * @param  c            The color to set
      */
     void set_foreground_color(color c);
 
     /**
      *                      Sets the default background color
-     * @param c             The color to set
+     * @param  c            The color to set
      */
     void set_background_color(color c);
 
@@ -135,7 +135,7 @@ static bool _visual_cursor = false;
 namespace vga {
     /**
      *                      Initializes the driver
-     * @return true  :       Driver was successfully initialized
+     * @return true         Driver was successfully initialized
      */
     bool init();
 
@@ -150,7 +150,7 @@ namespace vga {
 
     /**
      *                      Gets the length of a VGA character string
-     * @param str           pointer to null-terminated VGA string
+     * @param  str          pointer to null-terminated VGA string
      * @return              length of the string
      */
      // I don't see this being necessary cause it exposes internals
@@ -159,37 +159,37 @@ namespace vga {
     
     /**
      *                      Deals with printing escape characters
-     * @param c             The character to handle
-     * @return true  :      c was an escape character
-     *         false :      c was not an escape character 
+     * @param  c            The character to handle
+     * @return true         c was an escape character
+     *         false        c was not an escape character 
      */
     bool handle_special_characters(const char c, cursor& crs);
 
     /**
      *                      Prints a VGA character to the screen
      *                      at the default cursor
-     * @param c             The character to print
-     * @param _update       Whether or not to update cursor
+     * @param  c            The character to print
+     * @param  _update      Whether or not to update cursor
      */
     void write(const vga_char c, cursor& crs, bool _update = true);
 
     /**
      *                      Prints a VGA string to the screen
      *                      at the defautl cursor
-     * @param str           Pointer to the null-terminated VGA string
+     * @param  str           Pointer to the null-terminated VGA string
      */
     void write(const vga_char* str, cursor& crs);
 
     /** 
      *                      Prints an ASCII character
-     * @param c             The character to print
-     * @param _update       Whether or not to update cursor
+     * @param  c            The character to print
+     * @param  _update      Whether or not to update cursor
      */
     void write(const char c, cursor& crs, bool _update = true);
 
     /**
      *                      Prints an ASCII string
-     * @param arr           The null-terminated string to print
+     * @param  arr          The null-terminated string to print
      */
     void write(const char* str, cursor& crs);
 
@@ -205,8 +205,8 @@ namespace vga {
 
     /**
      *                      Update the position of the hardware cursor
-     * @param x             The new x-coordinate
-     * @param y             The new y-coordinate
+     * @param  x            The new x-coordinate
+     * @param  y            The new y-coordinate
      */
     void update_hw_cursor(size_t x, size_t y);
 }

@@ -2,6 +2,7 @@
 #include <drivers/ps2.hpp>
 #include <drivers/vga.hpp>
 #include <stl/array.h>
+#include <multiboot.hpp>
 
 [[maybe_unused]] constexpr short MAJOR_VERSION = 0;
 [[maybe_unused]] constexpr short MINOR_VERSION = 0;
@@ -24,7 +25,11 @@ void write_ff_info(cursor &crs) {
     crs << "\n";
 }
 
-extern "C" [[noreturn]] void kernel_main() {
+/**
+ *                          Long mode main kernel entry point
+ * @param  mboot_info_addr  physical address of the multiboot information structure
+ */
+extern "C" [[noreturn]] void kernel_main(uintptr_t mboot_info_addr) {
     vga::init();
     ps2::init();
     interrupt::init();

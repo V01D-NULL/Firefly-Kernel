@@ -37,18 +37,24 @@ header_start:
                                                 ; checksum
     dd 0x100000000 - (0xe85250d6 + 0 + (header_end - header_start))
 
-                                                ; insert optional multiboot tags here
+    dw 1    ; request info
+    dw 0
+    dd 12
+    dd 6    ; memory map
 
-                                                ; required end tag
-    dw 0    ; type
-    dw 0    ; flags
-    dd 8    ; size
+    dd 0    ; align next tag to 8 bytes
+
+    dw 0    ; end tag
+    dw 0
+    dd 8
 header_end:
 
 section .pm_stub
 bits 32
 start:
     mov esp, stack_top - VIRT_ADDR
+
+    push ebx                                    ; save pointer to mboot info structure
 
     call check_multiboot
     call check_cpuid
@@ -70,6 +76,8 @@ start:
     rdmsr
     or eax, 1 << 8                              ; set LME
     wrmsr
+
+    pop ebx                                     ; restore mb info pointer
 
     mov eax, cr0
     or eax, 1 << 31                             ; set PG
@@ -198,7 +206,7 @@ set_up_page_tables:
                                                 ; the physical addresses up to the end of the kernel
 
     cmp eax, _kernel_end - VIRT_ADDR            ; passed kernel binary?
-    je .done                                    ; yes, done mapping
+    je .done                                    ; yes, done mapping kernel
     or eax, 0b11                                ; writable + present
     mov dword [(pt - VIRT_ADDR) + ebx], eax     ; put into pt
     add ebx, 8                                  ; next index
@@ -218,6 +226,12 @@ long_mode_start:
     mov eax, pt - VIRT_ADDR                     ; physical address of a pt
     or eax, 0b11                                ; writable + present
     mov dword [(pd - VIRT_ADDR)], eax           ; put in first entry
+
+    mov rax, cr3                                ; invalidate tlb
+    mov cr3, rax
+
+    movzx rbx, ebx                              ; zero-pad pointer
+    push rbx                                    ; pass it to kernel_main
 
     mov ax, 0
     mov ss, ax
